@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> {% block title %}Title{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" >
+    <style>
+        .menu{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            margin-top: 20px;
+            margin-right: 50%;
+            padding-right: 250px;
+
+
+        }
+        .main{
+
+
+
+        }
+    </style>
+</head>
+<body style="background: lightblue">
+<div class="main">
+
+
+    <div class="menu">
+        <a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px"  href="{% url 'logout' %}">logout</a>
+        <a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'SendNewEmail' %}">Compose</a>
+        <a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'Inbox' %}">Inbox</a>
+        <a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'Sent' %}">Sent</a>
+        <a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'signup' %}">Drafts</a>
+        <a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'signup' %}">Trash</a>
+        <a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'signup' %}">Create Contact</a>
+
+
+    </div>
+    <div> {% block continer %}{% endblock %}</div>
+
+</div>
+</body>
+</html>

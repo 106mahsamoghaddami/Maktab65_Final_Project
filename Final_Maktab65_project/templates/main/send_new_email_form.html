@@ -1,0 +1,13 @@
+{% extends 'main/email_base.html' %}
+{% block title %} Compose{% endblock %}
+{% block continer %}
+<form  class="col-md-6 mx-auto mt-5"  action="/main/send_email/" method="post">
+        {% csrf_token %}
+
+
+        <div class="btn btn-block btn-outline-info">
+              {{ form.as_p }}
+            <button type="submit" class="btn btn-block btn-outline-info">Submit</button>
+        </div>
+</form>
+{% endblock %}
