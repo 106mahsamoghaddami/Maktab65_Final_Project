@@ -51,7 +51,7 @@ def send_activation_email(sender, instance, created, **kwargs):
                     <p>As a form of avoiding unrealistic and unserious users, we have to ensure email confirmation. 
                     Please click on the link to confirm your registration</p>
 
-                    <a href=\"http://localhost:8000/activate/{uid}/{token}\" style="color:white; text-decoration: none;border-radius: 25px; background-color: #754C28; padding: 7px 25px;"> <strong>Verify Email<strong></a>
+                    <a href=\"http://localhost:8000/main/activate/{uid}/{token}\" style="color:white; text-decoration: none;border-radius: 25px; background-color: #754C28; padding: 7px 25px;"> <strong>Verify Email<strong></a>
 
                     <br><br>If you think, it's not you, then just ignore this email. Thank you.  
 
