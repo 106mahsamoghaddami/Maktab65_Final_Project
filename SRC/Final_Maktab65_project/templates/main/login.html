@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container" style="width: 1000px " >
     <div class="row mt-5">
         <form class="col-md-6 mx-auto mt-5" action="/main/login/" method="POST">
             {% csrf_token %}
@@ -26,12 +26,12 @@
             </div>
 
 
-            <div class="form-group">
+            <div class="form-group "style="height: 5000px">
                 <label class="form-label">Password</label>
-                <input type="password" class="form-control" name='password'>
+                <input type="password" class="form-control" name='password' style="margin-bottom: 45px">
+                <button type="submit" class="btn btn-block btn-outline-info">Submit</button>
             </div>
 
-            <button type="submit" class="btn btn-block btn-outline-info">Submit</button>
 
 
         </form>

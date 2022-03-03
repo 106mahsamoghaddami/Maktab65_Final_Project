@@ -6,10 +6,12 @@
 
         <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
               {% if user.is_authenticated %}
-                   <h3> {{ user.first_name }} ' sent box</h3>
-                   {% for email in sent_emails %}
-                         <a href="/main/email_detail/{{ email.id }}"><p>  sent email to {{ email.receiver_email.get}}  </p></a>
+                   <h3> {{ user.first_name }} ' contacts :</h3>
+
+                   {% for contact in contacts %}
+                         <p>  {{ contact }}  </p>
                      {% endfor %}
+                  <a href="/main/new_contact/" style="background: lightcoral"> Create New Contact</a>
 
 
 
