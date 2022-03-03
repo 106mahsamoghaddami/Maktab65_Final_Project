@@ -1,0 +1,22 @@
+{% extends 'main/email_base.html' %}
+{% block title %} Compose{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+              {% if user.is_authenticated %}
+                   <h3> {{ user.first_name }} ' contacts :</h3>
+
+                   {% for contact in contacts %}
+                         <p>  {{ contact }}  </p>
+                     {% endfor %}
+                  <a href="/main/new_contact/" style="background: lightcoral"> Create New Contact</a>
+
+
+
+
+            {% endif %}
+        </div>
+
+{% endblock %}

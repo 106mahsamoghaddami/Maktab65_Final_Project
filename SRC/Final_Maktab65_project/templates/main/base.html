@@ -13,19 +13,42 @@
             justify-content: center;
             align-content: center;
         }
+        body{
+            background: whitesmoke;
+             display: table-cell;
+             vertical-align: middle;
+
+        }
+                html, body {
+            height: 100%;
+                        }
+
+        html {
+            display: table;
+            margin: auto;
+        }
+        .cont{
+            margin-top:40px ;
+            margin-bottom: 200px;
+            padding-left: 200px;
+            padding-right: 50px;
+            padding-top: 20px;
+            padding-bottom: 50px;
+        }
     </style>
 </head>
-<body style="background: lightblue" >
+<body
+>
 
 
     {% block content %}
 
-    <div class="container mt-5 ">
-        <h2 class="text-info text-center mt-5">Welcome to Email App</h2>
-        <div class="row mt-5">
+    <div class="cont    " style="background:lightblue ">
+        <h2 class="text-info text-center mt-5">Welcome To Email App</h2>
+        <div class="row mt-5 ">
 
-            <div class="col-6 ml-5 ">
-                <a class="btn btn-info col-md-4 mx-auto" href="{% url 'signup' %}">Sign Up</a>
+            <div class="col-6  ">
+                <a class="btn btn-info col-md mx-auto" href="{% url 'signup' %}">Sign Up</a>
 
 
             </div>
@@ -35,9 +58,9 @@
         </div>
 
           <div class="row mt-5">
-            <div class="col-6  ml-5 ">
+            <div class="col-6   ">
 
-                <a class="btn btn-info col-md-4 mx-auto" href="{% url 'login' %}">Login</a>
+                <a class="btn btn-info col-md mx-auto" href="{% url 'login' %}">Login</a>
 
             </div>
 

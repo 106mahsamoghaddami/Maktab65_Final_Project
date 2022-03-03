@@ -1,8 +1,0 @@
-{% extends 'main/email_base.html' %}
-
-{% block title %}  personal page {% endblock %}
-{% block content %}
-    <h3> from : {{ object.sender_email }} </h3>
-    <p> subject : {{ object.subject }}</p>
-    <p> email text : {{ object.text }}</p>
-{% endblock %}

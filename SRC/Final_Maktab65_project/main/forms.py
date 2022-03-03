@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
-from .models import User,Amail
+from .models import User,Amail ,Contacts
 
 
 class SignUpForm(forms.ModelForm):
@@ -53,4 +53,10 @@ class SignUpForm(forms.ModelForm):
 class SendNewEmailForm(forms.ModelForm):
     class Meta:
         model = Amail
-        fields = ['receiver_email','cc','bcc','subject','text','file']
+        fields = ['receiver_email', 'cc', 'bcc', 'subject', 'text', 'file']
+
+
+class NewContactForm(forms.ModelForm):
+    class Meta:
+        model = Contacts
+        fields = ['email', 'name', 'phone_number', 'other_email', 'birth_date']

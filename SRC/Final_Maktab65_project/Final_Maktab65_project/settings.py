@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'Final_Maktab65_project.wsgi.application'
 DATABASES = {
    'default': {
        'ENGINE': 'django.db.backends.postgresql',
-       'NAME': "final_project",
+       'NAME': "email_app",
        'USER': 'postgres',
        'PASSWORD': '1375mahsa',
        'HOST': '127.0.0.1',
@@ -141,5 +141,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST_USER = "m.moghaddami106@gmail.com"
-EMAIL_HOST_PASSWORD = "cmllsyyeryjesgxf"  # this is app password i take it from gmail
+EMAIL_HOST_PASSWORD = "tulrlrwlqjvqutkt"  # this is app password i take it from gmail
 EMAIL_PORT = 587

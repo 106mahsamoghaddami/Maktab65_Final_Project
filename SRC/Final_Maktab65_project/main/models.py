@@ -7,7 +7,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import BadHeaderError, send_mail
 from django.template.loader import render_to_string
-
+from django.utils import timezone
 
 class User(AbstractUser):
     first_name = models.CharField(max_length=50, null=True)
@@ -67,7 +67,7 @@ def send_activation_email(sender, instance, created, **kwargs):
 
 
 class Contacts(models.Model):
-    user = models.ManyToManyField(User)  # this contact is for user and an user have many contacts
+    user = models.ForeignKey(User, on_delete=models.CASCADE ,related_name= "contacts",null=True)
     email = models.EmailField()
     name = models.CharField(max_length=70)
     phone_number = models.CharField(max_length=11, unique=True, null=True, blank=True)
@@ -79,13 +79,25 @@ class Contacts(models.Model):
 
 
 class Amail(models.Model):
-    sender_email = models.ForeignKey(User, on_delete=models.CASCADE)  # an user can send many email
-    receiver_email = models.ManyToManyField(Contacts)  # a person who received email
-    cc = models.EmailField(null=True, blank=True)
-    bcc = models.EmailField(null=True, blank=True)
+    sender_email = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_emails")
+    receiver_email = models.ManyToManyField(User,  related_name="receive_emails")
+    cc = models.ManyToManyField(User, related_name="receive1_emails",blank=True)
+    bcc = models.ManyToManyField(User,  related_name="receive2_emails",blank=True)
     subject = models.CharField(max_length=200, null=True, blank=True)
     text = models.TextField(max_length=200, null=True, blank=True)
     file = models.FileField(null=True, blank=True)
+    date_time = models.DateTimeField(default=timezone.now)
+    is_archive = models.BooleanField(default=False)
+    is_trash = models.BooleanField(default=False)
+    is_sent = models.BooleanField(default=False)
+    is_read = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.sender_email} send email to {self.receiver_email} by {self.subject} subject"
+        a = Amail.objects.get(id=self.id)
+        r = a.receiver_email.all()
+        return f"{self.sender_email} send email to {r} by {self.subject} subject"
+
+
+# class Category(models.Model):
+#     name = models.CharField(max_length=50, null=True, blank=True)
+# should put a foreign key in email class

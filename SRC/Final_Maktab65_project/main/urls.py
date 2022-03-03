@@ -11,7 +11,14 @@ urlpatterns = [
     path('send_email/', views.SendNewEmail.as_view(), name='SendNewEmail'),
     path('inbox/', views.Inbox.as_view(), name='Inbox'),
     path('sent/', views.Sent.as_view(), name='Sent'),
-    path('email_detail/', views.AmailDetail.as_view(), name='EmailDetail'),
+    path('email_detail/<int:pk>', views.AmailDetail.as_view(), name='EmailDetail'),
+    path('email_detail_for_cc/<int:email_id>', views.email_detail_for_cc, name='EmailDetailCC'),
+    path('trash/<int:email_id>', views.trash, name='trash'),
+    path('trash_box/', views.trash_box, name='trash_box'),
+    path('new_contact/', views.NewContact.as_view(), name='NewContact'),
+    path('contact_list/', views.ContactList.as_view(), name='ContactList'),
+
+
 ]
 
 

@@ -1,0 +1,20 @@
+{% extends 'main/email_base.html' %}
+{% block title %} Compose{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+              {% if user.is_authenticated %}
+                   <h3> {{ user.first_name }} ' sent box</h3>
+                   {% for email in sent_emails %}
+                         <a href="/main/email_detail/{{ email.id }}"><p>  sent email to {{ email.receiver_email.get}}  </p></a>
+                     {% endfor %}
+
+
+
+
+            {% endif %}
+        </div>
+
+{% endblock %}
