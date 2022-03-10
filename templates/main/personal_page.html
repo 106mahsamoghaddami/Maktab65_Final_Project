@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>sent</title>
+</head>
+<body style="background: lightblue">
+
+</body>
+</html>
+{% extends 'main/email_base.html' %}
+{% block title %} Compose{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+                {% if user.is_authenticated %}
+
+                    <h3>  {{ user.first_name }} 's Inbox</h3>
+                    <hr>
+                         {% for email in inbox_emails1 %}
+                             <a href="/main/email_detail/{{ email.id }}"><p style="background: lightgray"> {{ email.sender_email }} sent you an email subject :{{ email.subject }}</p></a>
+                         {% endfor %}
+
+                    {% if inbox_emails2 %}
+                        {% for email_c in inbox_emails2 %}
+                        <a href="/main/email_detail_for_cc/{{ email_c.id }}"><p style="background: lightgray"> {{ email_c.sender_email }} sent you an email(cc) subject :{{ email_c.subject }} </p></a>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if inbox_emails3 %}
+                        {% for email_b in inbox_emails2 %}
+                        <a href="/main/email_detail/{{ email_b.id }}"><p style="background: lightgray"> {{ email_b.sender_email }} sent you an email(bcc) subject :{{ email_b.subject }} </p></a>
+                        {% endfor %}
+                    {% endif %}
+
+                {% endif %}
+        </div>
+
+{% endblock %}

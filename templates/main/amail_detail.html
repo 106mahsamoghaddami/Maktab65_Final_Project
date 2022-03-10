@@ -1,0 +1,26 @@
+
+{% extends 'main/email_base.html' %}
+{% block title %} Compose{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+        <p style="background: lightcoral ;font-size: large"> Email Details</p>
+            <p style="background: lightgreen;font-size: large">
+                <b><a href="/main/reply_email/{{ object.id }}"> Reply</a></b>
+                <b><a href="/main/forward_email/{{ object.id }}"> Forward</a></b>
+            </p>
+            <h4> From : {{ object.sender_email }} </h4>
+            <h4> To : {{ object.receiver_email }}</h4>
+            <p> Subject : {{ object.subject }}</p>
+            <p> Email Text : {{ object.text }}</p>
+            <p> Email Date and Time :{{ object.date_time }}</p>
+            <p> Attached File :{{ object.file }}</p>
+            <p>{{ object.id }}</p>
+            <p style="background: lightcoral ;font-size: large"><a href="/main/trash/{{ object.id }}"> Delete</a></p>
+            <p style="background: lightgreen;font-size: large"><a href="/main/make_archive/{{ object.id }}"> Archive</a></p>
+
+        </div>
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'main/email_base.html' %}
+{% block title %} sent box{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+              {% if user.is_authenticated %}
+                   <h3> {{ user.first_name }} ' SENT BOX</h3>
+
+
+                  <hr>
+
+                   {% for email in sent_emails %}
+                         <a href="/main/email_detail/{{ email.id }}" ><h5 style="background: lightgray">  sent email to {{ email.receiver_email.get}}  </h5></a>
+                     {% endfor %}
+
+
+
+
+            {% endif %}
+        </div>
+
+{% endblock %}

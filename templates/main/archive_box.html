@@ -1,0 +1,24 @@
+{% extends 'main/email_base.html' %}
+{% block title %} Compose{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+              {% if user.is_authenticated %}
+                   <h3> Archive Box</h3>
+                   <hr>
+                   {% for email in archive_emails %}
+                         <p>   From :{{ email.sender_email }}  To:{{ email.receiver_email }} subject:{{ email.subject }} </p>
+
+                   {% endfor %}
+
+
+
+
+
+
+            {% endif %}
+        </div>
+
+{% endblock %}

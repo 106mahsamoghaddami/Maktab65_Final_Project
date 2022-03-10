@@ -1,0 +1,51 @@
+{% extends 'main/base.html' %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <form class="col-md-6 mx-auto mt-5" method="POST" action="/main/register/">
+            <h3>SignUp Form</h3>
+            <hr>
+            {% csrf_token %}
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert-{{ message.tags }} rounded alert-dismissible text-center my-4 py-2" role="alert">
+
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{message}}
+
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% for error in form.errors %}
+            <div class="alert-danger alert-dismissible rounded text-center my-4 py-2" role="alert">
+
+                {% if error == 'password' %}
+                    {{form.password.errors.0}}
+                {% elif error == 'email' %}
+                    {{form.email.errors.0}}
+                {% elif error == 'phone_number' %}
+                    {{form.phone_number.errors.0}}
+                {% elif error == 'username' %}
+                    {{form.username.errors.0}}
+                {% endif %}
+
+            </div>
+            {% endfor %}
+        <div class="btn btn-block btn-outline-info">
+              {{ form.as_p }}
+
+            <button type="submit" class="btn btn-block btn-outline-info">Submit</button>
+        </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

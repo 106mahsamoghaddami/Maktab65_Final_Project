@@ -1,0 +1,29 @@
+{% extends 'main/email_base.html' %}
+{% block title %} Category{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+              {% if user.is_authenticated %}
+
+                   <h3>  Emails of this label</h3>
+                  <p><a href="/main/delete_category/{{ label_id }}" style="background: lightsalmon"> Delete Label </a></p>
+
+
+                   {% for mail in emails %}
+                         <a href="/main/email_detail/{{ mail.id }}"><p style="background: lightgray">  {{ mail }}  </p></a>
+                     {% endfor %}
+                  <h3 style="color: red">  {{ message }}</h3>
+
+                  <p><a href="/main/new_category/" style="background: lightgreen"> Add new email</a></p>
+
+
+
+
+
+
+            {% endif %}
+        </div>
+
+{% endblock %}

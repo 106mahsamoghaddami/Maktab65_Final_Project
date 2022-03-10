@@ -1,0 +1,18 @@
+{% extends 'main/email_base.html' %}
+{% block title %} new category{% endblock %}
+{% block continer %}
+<form  class="col-md-6 mx-auto mt-5"  action="/main/new_category/" method="post">
+        {% csrf_token %}
+
+
+        <div class="btn btn-block btn-outline-info">
+              {{ forms.as_p }}
+            <button type="submit"  name="submit" class="btn btn-block btn-outline-info" style="background: lightgreen">submit</button>
+
+
+
+        </div>
+
+</form>
+
+{% endblock %}

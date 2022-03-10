@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/main/logout/" method="post">
+    {% csrf_token %}
+    {% if user.is_authenticated %}
+  <h3 style="color: darkslategrey">GOOD BYE   {{ user.first_name }}  ^_^   </h3>
+        <p style="color: red">if you are sure want to log out press this button</p>
+  <p>   <input type="submit" value="logout"></p>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">Log In</a>
+{% endif %}
+
+
+
+</form>
+</body>
+</html>

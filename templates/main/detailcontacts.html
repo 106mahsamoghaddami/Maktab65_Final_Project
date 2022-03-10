@@ -1,0 +1,30 @@
+
+
+{% extends 'main/email_base.html' %}
+{% block title %} Detail contacts{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+              {% if user.is_authenticated %}
+                   <h3> Detail contacts:</h3>
+                  <hr>
+
+
+                <p>{{ contact.name }}</p>
+                <p>{{ contact.email }}</p>
+                <p>{{ contact.phone_number }}</p>
+                <p>{{ contact.birth_date }} </p>
+                {% with replies=contact.id %}
+                    <br><br>
+                        <button type="submit"><a href="{% url "UpdateContacts" replies %}">Update</a></button>
+                        <button type="submit"><a href="{% url "DeleteContacts" replies %}">Delete</a></button>
+                {#        <button type="submit"><a href="{% url 'mail_page:emailcontact' replies %}">Send email</a></button>#}
+                {% endwith %}
+
+
+              {% endif %}
+        </div>
+
+{% endblock %}

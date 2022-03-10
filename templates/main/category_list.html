@@ -1,0 +1,23 @@
+{% extends 'main/email_base.html' %}
+{% block title %} Category{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+              {% if user.is_authenticated %}
+
+                   <h3>  Category:</h3>
+
+                   {% for category in all_category %}
+                         <a href="/main/emails_of_category/{{ category.id }}"><p style="background: lightgray">  {{ category }}  </p></a>
+                     {% endfor %}
+                  <a href="/main/new_category/" style="background: lightcoral"> Create New Category</a>
+
+
+
+            <p> {{ message }}</p>
+            {% endif %}
+        </div>
+
+{% endblock %}

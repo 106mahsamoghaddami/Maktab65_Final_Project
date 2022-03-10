@@ -1,0 +1,27 @@
+{% extends 'main/email_base.html' %}
+{% block title %} Compose{% endblock %}
+{% block continer %}
+<form  class="col-md-6 mx-auto mt-5"  action="/main/manage_drafts/{{ email.id }}" method="post">
+        {% csrf_token %}
+
+
+        <div class="btn btn-block btn-outline-info">
+            <p> TO : <input type="email" name="receiver" value="{{ email.receiver_email.get }}"> </p>
+            <p> CC : <input type="email" name="cc" value="{{ email.cc.get }}"></p>
+            <p>BCC : <input type="email" name="bcc" value="{{ email.bcc.get }}"></p>
+            <p>Subject : <input type="text" name="subject" value="{{ email.subject }}"></p>
+            <p>Text : <input type="text" name="text" value="{{ email.text }}" class="form-control"></p>
+            <p>File : <input type="file" name="file" value="{{ email.file }}"></p>
+
+
+
+
+            <button type="submit"  name="submit" class="btn btn-block btn-outline-info" style="background: lightgreen">SEND</button>
+            <button type="submit" name="draft" class="btn btn-block btn-outline-info" style="background: lightcoral">Draft</button>
+
+
+        </div>
+
+</form>
+
+{% endblock %}

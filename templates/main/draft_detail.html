@@ -1,0 +1,24 @@
+{% extends 'main/email_base.html' %}
+{% block title %} Compose{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+        <p style="background: lightcoral ;font-size: large"> Email Details</p>
+        <h4> From : me</h4>
+        <h4> To : {{ email.receiver_email.get }}</h4>
+            <p>cc:{{ email.cc.get }}</p>
+            <p>cc:{{ email.bcc.get }}</p>
+        <p> Subject :{{ email.subject }}</p>
+        <p> Text : {{ email.text }}</p>
+        <p> Sent date&time {{ email.date_time }}</p>
+
+        <p style="background: lightcoral ;font-size: large"><a href="/main/trash/{{ email.id }}"> Delete</a></p>
+            <b style="background: lightgray"><a href="/main/manage_drafts/{{ email.id }}"> Edit</a></b>
+            <b style="background:lightgray "><a href="/main/manage_drafts/{{ email.id }}"> Sent</a></b>
+
+
+        </div>
+
+{% endblock %}

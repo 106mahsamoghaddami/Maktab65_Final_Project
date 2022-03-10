@@ -1,0 +1,24 @@
+{% extends 'main/email_base.html' %}
+{% block title %} trash{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+              {% if user.is_authenticated %}
+                   <h3> Trash Box</h3>
+                   {% for email in deleted_emails %}
+                         <p>   From :{{ email.sender_email }}  To:{{ email.receiver_email }} subject:{{ email.subject }} </p>
+
+                   {% endfor %}
+                   <a href="">  <p  style="background: lightcoral"> DELETE All</p></a>
+{#                  that 's better to use inbut for post some thing#}
+
+
+
+
+
+            {% endif %}
+        </div>
+
+{% endblock %}

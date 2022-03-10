@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> {% block title %}Title{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" >
+    <style>
+        {#.menu{#}
+        {#    display: flex;#}
+        {#    flex-direction: column;#}
+        {#    justify-content: space-around;#}
+        {#    margin-top: 20px;#}
+        {#    margin-right: 50%;#}
+        {#    padding-right: 250px;#}
+        {##}
+        {##}
+        {#}#}
+
+    </style>
+</head>
+<body style="background: lightblue">
+<div class='row'>
+
+
+    <div class=" col-3 ml-2 pl-5 pt-4">
+        <p><a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px"  href="{% url 'logout' %}">logout</a></p>
+        <p><a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'SendNewEmail' %}">Compose</a></p>
+        <p><a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'Inbox' %}">Inbox</a></p>
+        <p><a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'Sent' %}">Sent</a></p>
+        <p><a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'DraftBox' %}">Drafts</a></p>
+        <p><a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'ArchiveBox' %}">Archive</a></p>
+        <p><a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'TrashBox' %}">Trash</a></p>
+        <p><a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'ContactList' %}"> Contact</a></p>
+        <p><a class="btn btn-info col-md-4 mx-auto"  style="margin-top: 20px" href="{% url 'ShowAllCategory' %}"> Category</a></p>
+
+
+    </div>
+    <div class="col-8"> {% block continer %}{% endblock %}</div>
+
+    </div>
+
+</body>
+</html>

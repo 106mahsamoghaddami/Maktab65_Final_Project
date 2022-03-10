@@ -1,0 +1,25 @@
+{% extends 'main/email_base.html' %}
+{% block title %} Compose{% endblock %}
+{% block continer %}
+
+
+
+        <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+              {% if user.is_authenticated %}
+                   <h3> Draft Box</h3>
+                  <hr>
+                   {% for email in draft_emails %}
+                       <a href="/main/draft_detail/{{ email.id }}"><p style="background: lightgray">   From :{{ email.sender_email }}  To:{{ email.receiver_email.get }} subject:{{ email.subject }} </p></a>
+
+                   {% endfor %}
+
+
+
+
+
+
+
+            {% endif %}
+        </div>
+
+{% endblock %}
