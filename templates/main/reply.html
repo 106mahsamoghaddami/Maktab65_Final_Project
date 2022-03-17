@@ -1,6 +1,17 @@
 {% extends 'main/email_base.html' %}
 {% block title %} reply{% endblock %}
 {% block continer %}
+     {% if messages %}
+                {% for message in messages %}
+                    <div class="alert-{{ message.tags }} rounded alert-dismissible text-center
+         my-4 py-2" role="alert">
+
+
+                    {{message}}
+
+                    </div>
+                {% endfor %}
+            {% endif %}
 <form  class="col-md-6 mx-auto mt-5"  action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 

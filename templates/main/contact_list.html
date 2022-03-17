@@ -1,10 +1,36 @@
 {% extends 'main/email_base.html' %}
 {% block title %} Contacts{% endblock %}
 {% block continer %}
+    {% load static %}
+    <script src="{% static 'js/search_contact.js' %}" defer>
+
+    </script>
+
+<div class=" col- ml-2 pl-5 pt-4" >
+                <div class="form-group">
+                    <form id = "search-form" autocomplete="off">
+                                {% csrf_token %}
+                              <input  type="text" class= "form-control" id="contactSearch" placeholder= " Search contacts...." style="width: 300px" >
+                            </form>
+
+                            <div id = "resultsBox" class = "results-card not-visible" style="background: white">
+                            </div>
 
 
+                 </div>
 
         <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+         {% if messages %}
+                {% for message in messages %}
+                    <div class="alert-{{ message.tags }} rounded alert-dismissible text-center
+         my-4 py-2" role="alert">
+
+
+                    {{message}}
+
+                    </div>
+                {% endfor %}
+            {% endif %}
               {% if user.is_authenticated %}
                    <h3> {{ user.first_name }} ' contacts :</h3>
 
@@ -12,11 +38,13 @@
                          <a href="/main/contact_detail/{{ contact.id }}"><p style="background: lightgray">  {{ contact }}  </p></a>
                      {% endfor %}
                   <a href="/main/new_contact/" style="background: lightcoral"> Create New Contact</a>
+                  <a href="/main/exportcsv/" style="background: lightgreen"> Download Contacts (csv)</a>
 
 
 
 
             {% endif %}
+
         </div>
 
 {% endblock %}

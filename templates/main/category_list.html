@@ -5,6 +5,17 @@
 
 
         <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
+           {% if messages %}
+                {% for message in messages %}
+                    <div class="alert-{{ message.tags }} rounded alert-dismissible text-center
+         my-4 py-2" role="alert">
+
+
+                    {{message}}
+
+                    </div>
+                {% endfor %}
+            {% endif %}
               {% if user.is_authenticated %}
 
                    <h3>  Category:</h3>

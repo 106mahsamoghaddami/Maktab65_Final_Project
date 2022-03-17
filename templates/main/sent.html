@@ -12,7 +12,7 @@
                   <hr>
 
                    {% for email in sent_emails %}
-                         <a href="/main/email_detail/{{ email.id }}" ><h5 style="background: lightgray">  sent email to {{ email.receiver_email.get}}  </h5></a>
+                         <a href="/main/email_detail/{{ email.id }}" ><h5 style="background: lightgray">  sent email to {{ email.receiver_email.get}} ({{ email.subject }})  </h5></a>
                      {% endfor %}
 
 

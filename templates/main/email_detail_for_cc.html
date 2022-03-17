@@ -16,6 +16,9 @@
         <p> Text : {{ email.text }}</p>
         <p> Sent date&time {{ email.date_time }}</p>
         <p > you received this email as a cc (other receivers is : {{ email.receiver_email.get }} , {{ email.bcc.get }})</p>
+            {% if email.file %}
+            <p> Attached File :<a href="{{ email.file.url }}"> File</a></p>
+            {% endif %}
         <p style="background: lightcoral ;font-size: large"><a href="/main/trash/{{ email.id }}"> Delete</a></p>
         <p style="background: lightgreen ;font-size: large"><a href="/main/make_archive/{{ object.id }}"> Archive</a></p>
 

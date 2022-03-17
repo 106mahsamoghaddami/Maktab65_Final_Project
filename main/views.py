@@ -1,16 +1,20 @@
+import csv
+
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, DetailView
-from .forms import SignUpForm, SendNewEmailForm, NewContactForm ,ReplyForm ,ForwardForm ,NewCategoryForm
+from .forms import SignUpForm, SendNewEmailForm, NewContactForm, ReplyForm, ForwardForm, NewCategoryForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import User, Amail, Contacts ,Category
+from .models import User, Amail, Contacts, Category
 from django.contrib.auth.decorators import login_required
 from Final_Maktab65_project import settings
+import json
+from django.http import JsonResponse
 
 
 def home(request):
@@ -144,7 +148,7 @@ class SendNewEmail(LoginRequiredMixin, View):
                 new_email.bcc.add(bcc_id)
                 new_email.save()
 
-                messages.success(request, f"email send successfully to {receiver} and others")
+                messages.success(request, f"email saved successfully in draft box")
 
                 return HttpResponseRedirect("/main/personal_page")
 
@@ -180,12 +184,40 @@ class SentBox(LoginRequiredMixin, View):
         sent = Amail.objects.filter(sender_email__username=sender_username)
         [sent_emails.append(email) for email in sent if email.is_trash == False and email.is_sent == True]
 
-
         return render(request, "main/sent.html", {"sent_emails": sent_emails})
 
 
-class AmailDetail(DetailView):
-    model = Amail
+class AmailDetail(LoginRequiredMixin, View):
+    def get(self,request,email_id):
+        email = Amail.objects.get(id=email_id)
+        user = User.objects.get(pk=request.user.id)
+        user_labels = []
+        try:
+            for label in Category.objects.all():
+                if label.owner == user:
+                    user_labels.append(label)
+
+            return render(request, "main/amail_detail.html", {'email': email ,'user_labels':user_labels})
+        except:
+            print("You have not defined any labels")
+            return HttpResponseRedirect("/main/category_list/")
+
+    def post(self,request,email_id):
+        user = User.objects.get(pk=request.user.id)
+        email = Amail.objects.get(id=email_id)
+        choice_label = request.POST['label']
+
+
+
+        for cat in Category.objects.all():
+
+            if str(cat) == choice_label and cat.owner == user:
+
+                email.label = cat
+                email.save(force_update=True)
+
+        messages.success(request, f"assigned {choice_label} label for your {email} email ")
+        return HttpResponseRedirect("/main/category_list/")
 
 
 def email_detail_for_cc(request, email_id):
@@ -217,7 +249,7 @@ class ReplyEmail(LoginRequiredMixin, View):
                                             )
             new_mail.receiver_email.add(receiver_id)
             new_mail.save()
-
+            messages.success(request, f"email send successfully ")
             return HttpResponseRedirect("/main/personal_page/")
 
     def get(self, request, id):
@@ -253,17 +285,17 @@ class ForwardEmail(LoginRequiredMixin, View):
             for user2 in User.objects.all():
                 if user2 == bcc[0]:
                     bcc_id = user2.id
-            email =Amail.objects.create(sender_email = sender,
-                                        subject=request.POST['subject'],
-                                        text=request.POST['text'],
-                                        file=request.POST['file'],
-                                        is_sent=True
-            )
+            email = Amail.objects.create(sender_email=sender,
+                                         subject=request.POST['subject'],
+                                         text=request.POST['text'],
+                                         file=request.POST['file'],
+                                         is_sent=True
+                                         )
             email.receiver_email.add(receiver_id)
             email.cc.add(cc_id)
             email.bcc.add(bcc_id)
             email.save()
-
+        messages.success(request, f"email send successfully ")
         return HttpResponseRedirect("/main/sent/")
 
 
@@ -271,6 +303,7 @@ def trash(request, email_id):
     email = Amail.objects.get(id=email_id)
     email.is_trash = True
     email.save(force_update=True)  # for update object with new value
+    messages.success(request, f"email trashed successfully ")
     return HttpResponseRedirect("/main/personal_page/")
 
 
@@ -331,6 +364,7 @@ class NewContact(LoginRequiredMixin, View):
                                    other_email=form.cleaned_data['other_email'],
                                    birth_date=form.cleaned_data['birth_date'])
             new_contact.save()
+            messages.success(request, f"new contact added   successfully ")
             return HttpResponseRedirect("/main/contact_list/")
         else:
             HttpResponse(f"faild {form.errors}")
@@ -351,6 +385,52 @@ class DetailContacts(View):
         return render(request, 'main/detailcontacts.html', {'contact': contact})
 
 
+class ExportCsv(LoginRequiredMixin, View):
+    def get(self,request):
+        user = User.objects.get(pk=request.user.id)
+        contacts = Contacts.objects.all().filter(user_id=user.id)  # give me just contact of this user hase log in
+        response = HttpResponse('text/csv')
+        response['Content-Disposition'] = 'attachment; filename=contact.csv'
+        writer = csv.writer(response)
+        writer.writerow(['ID', 'Owner', 'Email', 'Name', 'Phone Number','Other email','Birth_Date'])
+        cont = contacts.values_list('id','user', 'email', 'name', 'phone_number','other_email','birth_date')
+        for c in cont:
+            writer.writerow(c)
+        return response
+
+
+def search(request):
+    if request.method=='POST':
+        search_str = json.loads(request.body).get('searchText')
+        print(search_str)
+
+        email = Amail.objects.filter(sender_email__username__istartswith=search_str, receiver_email=request.user) | \
+                Amail.objects.filter(receiver_email__username__istartswith=search_str, sender_email=request.user) | \
+                Amail.objects.filter(cc__username__istartswith=search_str, sender_email=request.user) | \
+                Amail.objects.filter(bcc__username__istartswith=search_str, sender_email=request.user) | \
+                Amail.objects.filter(subject__icontains=search_str) | \
+                Amail.objects.filter(text__icontains=search_str)|\
+                Amail.objects.filter(label__amail__text__icontains=search_str)
+        print(email)
+        data = email.values()
+        return JsonResponse( list(data) ,safe=False)
+
+
+def search_contact(request):
+    if request.method == 'POST':
+        search_str = json.loads(request.body).get('searchText')
+
+        contact = Contacts.objects.filter(name__icontains=search_str, user=request.user) | \
+                  Contacts.objects.filter(email__icontains=search_str, user=request.user) | \
+                  Contacts.objects.filter(phone_number__icontains=search_str, user=request.user) | \
+                  Contacts.objects.filter(birth_date__istartswith=search_str, sender_email=request.user)
+
+        data = contact.values()
+        return JsonResponse(list(data), safe=False)
+
+
+
+
 class UpdateContacts(LoginRequiredMixin, View):
     form_class = NewContactForm
 
@@ -367,11 +447,11 @@ class UpdateContacts(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         contact = self.contact_instance
-        contact_id =contact.id
+        contact_id = contact.id
         print(contact_id)
 
         form = self.form_class(instance=contact)
-        return render(request, 'main/update_contact.html', {'form': form })
+        return render(request, 'main/update_contact.html', {'form': form})
 
     def post(self, request, *args, **kwargs):
         contact = self.contact_instance
@@ -387,6 +467,7 @@ class UpdateContacts(LoginRequiredMixin, View):
             new_contact.user = owner
             new_contact.save(force_update=True)
             messages.success(request, 'you updated this post', 'success')
+
             return HttpResponseRedirect("/main/contact_list/")
 
 
@@ -398,12 +479,8 @@ class DeleteContact(LoginRequiredMixin, View):
         print(selected_contact)
         if selected_contact.user == user:
             selected_contact.delete()
-            messages.success(request,"contact delete successfully")
+            messages.success(request, "contact delete successfully")
             return HttpResponseRedirect("/main/contact_list/")
-
-
-
-
 
 
 class DraftBox(LoginRequiredMixin, View):
@@ -419,7 +496,7 @@ class DraftBox(LoginRequiredMixin, View):
         # user 's email that user is sender
         check_sender_user = Amail.objects.filter(sender_email_id=user.id)
         for email in check_sender_user:
-            if  email.is_sent ==False:
+            if email.is_sent == False:
                 draft_emails.append(email)
 
         return render(request, "main/draft_box.html", {'draft_emails': draft_emails})
@@ -464,6 +541,7 @@ class ManageDrafts(LoginRequiredMixin, View):
             email.file = request.POST['file']
             email.is_sent = True
             email.save(force_update=True)
+            messages.success(request, f"email send successfully ")
             return HttpResponseRedirect("/main/personal_page/")
 
         elif "draft" in request.POST:
@@ -486,6 +564,17 @@ def make_archive(request, mail_id):
     email.is_archive = True
     email.save(force_update=True)  # for update object with new value
     return HttpResponseRedirect("/main/personal_page/")
+
+
+def unarchive(request, mail_id):
+    if request.method == 'GET':
+        email = Amail.objects.get(id=mail_id)
+        return render(request, "main/unarchive.html", {'email': email})
+    if request.method == 'POST':
+        email = Amail.objects.get(id=mail_id)
+        email.is_archive = False
+        email.save(force_update=True)  # for update object with new value
+        return HttpResponseRedirect("/main/archive_box/")
 
 
 class ArchiveBox(LoginRequiredMixin, View):
@@ -537,6 +626,8 @@ class NewCategory(LoginRequiredMixin, View):
             new_category = Category(owner=user,
                                     name=form.cleaned_data['name'])
             new_category.save()
+            messages.success(request, f"new label created successfully ")
+
             return HttpResponseRedirect("/main/category_list/")
 
 
@@ -544,16 +635,16 @@ class ShowCategory(LoginRequiredMixin, View):
     def get(self, request):
         user = User.objects.get(pk=request.user.id)
         print(user)
-        all_category =[]
+        all_category = []
         # all_category = Category.objects.get(owner=user)
         for cat in Category.objects.all():
             if cat.owner == user:
                 all_category.append(cat)
-        if all_category :
-            return render(request,"main/category_list.html",{'all_category':all_category})
+        if all_category:
+            return render(request, "main/category_list.html", {'all_category': all_category})
         else:
-            message=f" Dear {user.first_name } you have not created any labels before"
-            return render(request,"main/category_list.html",{'message':message})
+            message = f" Dear {user.first_name} you have not created any labels before"
+            return render(request, "main/category_list.html", {'message': message})
 
 
 class EmailsOfCategory(LoginRequiredMixin, View):
@@ -586,10 +677,10 @@ class EmailsOfCategory(LoginRequiredMixin, View):
             if email3.label_id == cat_id:
                 emails.append(email3)
         if emails:
-            return render(request, "main/emails_of_spacial_category.html", {'emails': emails,'label_id':cat_id})
+            return render(request, "main/emails_of_spacial_category.html", {'emails': emails, 'label_id': cat_id})
         else:
-            message=f" You have not added any emails to this label yet"
-            return render(request, "main/emails_of_spacial_category.html", {'message': message,'label_id':cat_id})
+            message = f" You have not added any emails to this label yet"
+            return render(request, "main/emails_of_spacial_category.html", {'message': message, 'label_id': cat_id})
 
 
 class DeleteLabel(LoginRequiredMixin, View):
@@ -599,5 +690,9 @@ class DeleteLabel(LoginRequiredMixin, View):
 
         if selected_label.owner == user:
             selected_label.delete()
+            messages.success(request, f"label delete  successfully ")
 
             return HttpResponseRedirect("/main/category_list/")
+
+
+

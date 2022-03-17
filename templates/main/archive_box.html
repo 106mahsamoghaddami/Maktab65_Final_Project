@@ -9,7 +9,8 @@
                    <h3> Archive Box</h3>
                    <hr>
                    {% for email in archive_emails %}
-                         <p>   From :{{ email.sender_email }}  To:{{ email.receiver_email }} subject:{{ email.subject }} </p>
+
+                       <a href="/main/make_unarchive/{{ email.id}}"><p>   From :{{ email.sender_email }}  To:{{ email.receiver_email }} subject:{{ email.subject }} </p></a>
 
                    {% endfor %}
 
