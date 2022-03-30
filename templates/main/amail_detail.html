@@ -1,6 +1,6 @@
 
 {% extends 'main/email_base.html' %}
-{% block title %} Compose{% endblock %}
+{% block title %} Email detail{% endblock %}
 {% block continer %}
 
 
@@ -11,10 +11,15 @@
                 <b><a href="/main/reply_email/{{ email.id }}"> Reply</a></b>
                 <b><a href="/main/forward_email/{{ email.id }}"> Forward</a></b>
             </p>
+            {% if email.replied_email  %}
+                <p> replied for --> {{ email.replied_email.subject }} ({{  email.replied_email.text}})</p>
+            {% endif %}
             <h4> From : {{ email.sender_email }} </h4>
             <h4> To : {{ email.receiver_email.get }}</h4>
             <p> Subject : {{ email.subject }}</p>
             <p> Email Text : {{ email.text }}</p>
+            <p> Signature : {{ email.signature }}</p>
+
             <p> Email Date and Time :{{ email.date_time }}</p>
             {% if email.file %}
             <p> Attached File :<a href="{{ email.file.url }}"> File</a></p>

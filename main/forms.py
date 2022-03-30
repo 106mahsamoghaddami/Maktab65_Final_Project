@@ -54,7 +54,7 @@ class SignUpForm(forms.ModelForm):
 class SendNewEmailForm(forms.ModelForm):
     class Meta:
         model = Amail
-        fields = ['receiver_email', 'cc', 'bcc', 'subject', 'text', 'file']
+        fields = ['receiver_email', 'cc', 'bcc', 'subject', 'text', 'file','signature']
         # widgets = {
         #     'text': forms.Textarea(attrs={'cols': 40, 'rows': 10}),
         #     'receiver_email': forms.EmailInput(),
@@ -75,7 +75,7 @@ class NewContactForm(forms.ModelForm):
 class ReplyForm(forms.ModelForm):
     class Meta:
         model = Amail
-        fields = {'subject', 'text', 'file'}
+        fields = {'subject', 'text', 'file','signature'}
         widgets = {
             'text': forms.Textarea(attrs={"class": "form-control"})
         }
@@ -84,7 +84,7 @@ class ReplyForm(forms.ModelForm):
 class ForwardForm(forms.ModelForm):
     class Meta:
         model = Amail
-        fields = {'receiver_email', 'cc', 'bcc'}
+        fields = {'receiver_email', 'cc', 'bcc','signature'}
         widgets = {
             'text': forms.Textarea(attrs={'cols': 40, 'rows': 10}),
             # 'receiver_email' :forms.EmailInput(),

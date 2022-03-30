@@ -37,6 +37,7 @@ urlpatterns = [
     path('delete_category/<int:id>', views.DeleteLabel.as_view(), name='DeleteLabel'),
     path('search_email/', csrf_exempt(views.search), name='search'),
     path('search_contact/', csrf_exempt(views.search_contact), name='search_contact'),
+    path('filter/', views.Filter.as_view(), name='search_contact'),
 
 
 

@@ -1,5 +1,6 @@
 import csv
 
+from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
@@ -111,7 +112,8 @@ class SendNewEmail(LoginRequiredMixin, View):
                                                  subject=form.cleaned_data['subject'],
                                                  text=form.cleaned_data['text'],
                                                  file=form.cleaned_data['file'],
-                                                 is_sent=True
+                                                 is_sent=True,
+                                                 signature=form.cleaned_data['signature']
                                                  )
 
                 new_email.receiver_email.add(receiver_id)
@@ -140,7 +142,9 @@ class SendNewEmail(LoginRequiredMixin, View):
                                                  subject=form.cleaned_data['subject'],
                                                  text=form.cleaned_data['text'],
                                                  file=form.cleaned_data['file'],
-                                                 is_sent=False
+                                                 is_sent=False,
+                                                 signature=form.cleaned_data['signature']
+
                                                  )
 
                 new_email.receiver_email.add(receiver_id)
@@ -166,9 +170,12 @@ class Inbox(LoginRequiredMixin, View):
         inbox2 = Amail.objects.filter(cc__id=receiver_id)
         inbox3 = Amail.objects.filter(bcc__id=receiver_id)
         # i don't want show deleted emails and draft emails in inbox
-        [inbox_emails1.append(email1) for email1 in inbox1 if email1.is_trash == False and email1.is_sent == True]
-        [inbox_emails2.append(email2) for email2 in inbox2 if email2.is_trash == False and email2.is_sent == True]
-        [inbox_emails3.append(email3) for email3 in inbox3 if email3.is_trash == False and email3.is_sent == True]
+        [inbox_emails1.append(email1) for email1 in inbox1 if
+         email1.is_trash == False and email1.is_sent == True and email1.is_filter == False]
+        [inbox_emails2.append(email2) for email2 in inbox2 if
+         email2.is_trash == False and email2.is_sent == True and email2.is_filter == False]
+        [inbox_emails3.append(email3) for email3 in inbox3 if
+         email3.is_trash == False and email3.is_sent == True and email3.is_filter == False]
 
         return render(request, "main/personal_page.html", {"inbox_emails1": inbox_emails1,
                                                            "inbox_emails2": inbox_emails2,
@@ -182,13 +189,14 @@ class SentBox(LoginRequiredMixin, View):
         sender = User.objects.get(pk=request.user.id)
         sender_username = sender.username
         sent = Amail.objects.filter(sender_email__username=sender_username)
-        [sent_emails.append(email) for email in sent if email.is_trash == False and email.is_sent == True]
+        [sent_emails.append(email) for email in sent if
+         email.is_trash == False and email.is_sent == True and email.is_filter == False]
 
         return render(request, "main/sent.html", {"sent_emails": sent_emails})
 
 
 class AmailDetail(LoginRequiredMixin, View):
-    def get(self,request,email_id):
+    def get(self, request, email_id):
         email = Amail.objects.get(id=email_id)
         user = User.objects.get(pk=request.user.id)
         user_labels = []
@@ -197,22 +205,19 @@ class AmailDetail(LoginRequiredMixin, View):
                 if label.owner == user:
                     user_labels.append(label)
 
-            return render(request, "main/amail_detail.html", {'email': email ,'user_labels':user_labels})
+            return render(request, "main/amail_detail.html", {'email': email, 'user_labels': user_labels})
         except:
             print("You have not defined any labels")
             return HttpResponseRedirect("/main/category_list/")
 
-    def post(self,request,email_id):
+    def post(self, request, email_id):
         user = User.objects.get(pk=request.user.id)
         email = Amail.objects.get(id=email_id)
         choice_label = request.POST['label']
 
-
-
         for cat in Category.objects.all():
 
             if str(cat) == choice_label and cat.owner == user:
-
                 email.label = cat
                 email.save(force_update=True)
 
@@ -244,13 +249,15 @@ class ReplyEmail(LoginRequiredMixin, View):
                                             subject=form.cleaned_data['subject'],
                                             text=form.cleaned_data['text'],
                                             file=form.cleaned_data['file'],
-                                            is_sent=True
+                                            is_sent=True,
+                                            signature=form.cleaned_data['signature'],
+                                            replied_email=email
 
                                             )
             new_mail.receiver_email.add(receiver_id)
             new_mail.save()
             messages.success(request, f"email send successfully ")
-            return HttpResponseRedirect("/main/personal_page/")
+            return HttpResponseRedirect("/main/sent/")
 
     def get(self, request, id):
         form = ReplyForm()
@@ -289,6 +296,7 @@ class ForwardEmail(LoginRequiredMixin, View):
                                          subject=request.POST['subject'],
                                          text=request.POST['text'],
                                          file=request.POST['file'],
+                                         signature=form.cleaned_data['signature'],
                                          is_sent=True
                                          )
             email.receiver_email.add(receiver_id)
@@ -386,49 +394,48 @@ class DetailContacts(View):
 
 
 class ExportCsv(LoginRequiredMixin, View):
-    def get(self,request):
+    def get(self, request):
         user = User.objects.get(pk=request.user.id)
         contacts = Contacts.objects.all().filter(user_id=user.id)  # give me just contact of this user hase log in
         response = HttpResponse('text/csv')
         response['Content-Disposition'] = 'attachment; filename=contact.csv'
         writer = csv.writer(response)
-        writer.writerow(['ID', 'Owner', 'Email', 'Name', 'Phone Number','Other email','Birth_Date'])
-        cont = contacts.values_list('id','user', 'email', 'name', 'phone_number','other_email','birth_date')
+        writer.writerow(['ID', 'Owner', 'Email', 'Name', 'Phone Number', 'Other email', 'Birth_Date'])
+        cont = contacts.values_list('id', 'user', 'email', 'name', 'phone_number', 'other_email', 'birth_date')
         for c in cont:
             writer.writerow(c)
         return response
 
 
 def search(request):
-    if request.method=='POST':
+    if request.method == 'POST':
         search_str = json.loads(request.body).get('searchText')
-        print(search_str)
 
-        email = Amail.objects.filter(sender_email__username__istartswith=search_str, receiver_email=request.user) | \
-                Amail.objects.filter(receiver_email__username__istartswith=search_str, sender_email=request.user) | \
-                Amail.objects.filter(cc__username__istartswith=search_str, sender_email=request.user) | \
-                Amail.objects.filter(bcc__username__istartswith=search_str, sender_email=request.user) | \
-                Amail.objects.filter(subject__icontains=search_str) | \
-                Amail.objects.filter(text__icontains=search_str)|\
-                Amail.objects.filter(label__amail__text__icontains=search_str)
-        print(email)
-        data = email.values()
-        return JsonResponse( list(data) ,safe=False)
+        emails = Amail.objects.filter(Q(sender_email=request.user.id) | Q(receiver_email=request.user.id),
+                                      Q(receiver_email__username__icontains=search_str) |
+                                      Q(cc__username__istartswith=search_str, sender_email=request.user) |
+                                      Q(bcc__username__istartswith=search_str, sender_email=request.user) |
+                                      Q(subject__icontains=search_str) | Q(text__icontains=search_str) |
+                                      Q(label__amail__text__icontains=search_str))
+
+        data = emails.values()
+
+        # print(data)
+        return JsonResponse(list(data), safe=False)
 
 
 def search_contact(request):
     if request.method == 'POST':
         search_str = json.loads(request.body).get('searchText')
 
-        contact = Contacts.objects.filter(name__icontains=search_str, user=request.user) | \
-                  Contacts.objects.filter(email__icontains=search_str, user=request.user) | \
-                  Contacts.objects.filter(phone_number__icontains=search_str, user=request.user) | \
-                  Contacts.objects.filter(birth_date__istartswith=search_str, sender_email=request.user)
+        contact = Contacts.objects.filter(Q(name__icontains=search_str, user=request.user.id) |
+                                          Q(email__icontains=search_str, user=request.user.id) |
+                                          Q(phone_number__icontains=search_str, user=request.user.id) |
+                                          Q(birth_date__istartswith=search_str))
 
         data = contact.values()
+        # print(data)
         return JsonResponse(list(data), safe=False)
-
-
 
 
 class UpdateContacts(LoginRequiredMixin, View):
@@ -695,4 +702,78 @@ class DeleteLabel(LoginRequiredMixin, View):
             return HttpResponseRedirect("/main/category_list/")
 
 
+class Filter(LoginRequiredMixin, View):
+    def get(self, request):
+        user = User.objects.get(pk=request.user.id)
+        user_labels = []
+        try:
+            for label in Category.objects.all():
+                if label.owner == user:
+                    user_labels.append(label)
 
+            return render(request, "main/filter.html", {'user_labels': user_labels})
+        except:
+
+            return HttpResponse("page not find")
+
+    """user can filter emails by subject and text or username 
+    so we have 2 condition to know this filter is by text or user name """
+
+    def post(self, request):
+
+        if request.POST['choice'] == 'subject':  # filter by subject and text
+            try:
+
+                user = User.objects.get(pk=request.user.id)
+
+                user_id = user.id
+                all_emails = Amail.objects.filter(Q(receiver_email__id=user_id) | Q(sender_email=request.user.id))
+                for email in all_emails:
+                    if request.POST['filter_word'] in email.subject or request.POST['filter_word'] in email.text:
+                        choice_label = request.POST['label']
+
+                        for cat in Category.objects.all():
+
+                            if str(cat) == choice_label and cat.owner == user:
+                                email.label = cat
+                                email.is_filter = True
+
+                                email.save(force_update=True)
+
+                messages.success(request, f"email filtered successfully ")
+                return HttpResponseRedirect("/main/category_list/")
+
+
+            except:
+                messages.warning(request, f" some thing is wrong try again  !!")
+                return HttpResponseRedirect("/main/filter/")
+
+
+        elif request.POST['choice'] == 'username':  # filter by username
+            try:
+                if request.POST['filter_word'] != "":
+                    user = User.objects.get(pk=request.user.id)
+
+                    user_id = user.id
+                    all_emails = Amail.objects.filter(Q(receiver_email__id=user_id) | Q(sender_email=request.user.id))
+                    # from all emails we need them receiver or sender is login user
+                    for email in all_emails:
+
+                        if str(email.sender_email) == request.POST['filter_word']:
+
+                            choice_label = request.POST['label']
+
+                            for cat in Category.objects.all():
+
+                                if str(cat) == choice_label and cat.owner == user:
+                                    email.label = cat
+                                    email.is_filter = True
+
+                                    email.save(force_update=True)
+                    messages.success(request, f"email filtered successfully ")
+                    return HttpResponseRedirect("/main/category_list/")
+                else:
+                    messages.warning(request, f" inter words for search and filter  !!")
+            except:
+                messages.warning(request, f" some thing is wrong try again  !!")
+                return HttpResponseRedirect("/main/filter/")

@@ -2,22 +2,39 @@
 {% block title %} Contacts{% endblock %}
 {% block continer %}
     {% load static %}
-    <script src="{% static 'js/search_contact.js' %}" defer>
-
+    <script src="{% static 'js/search_contacts.js' %}" defer >
     </script>
 
 <div class=" col- ml-2 pl-5 pt-4" >
                 <div class="form-group">
                     <form id = "search-form" autocomplete="off">
                                 {% csrf_token %}
-                              <input  type="text" class= "form-control" id="contactSearch" placeholder= " Search contacts...." style="width: 300px" >
+                              <input  type="text" class= "form-control" id="searchItem" placeholder= " Search contacts...." style="width: 300px" >
                             </form>
 
-                            <div id = "resultsBox" class = "results-card not-visible" style="background: white">
+
                             </div>
 
 
                  </div>
+                    <div class="list_div">
+                        <ol>
+                            {% for email in object_list %}
+                                <li class="">
+                                <a>
+                                    {{ email.sender }} : {{ email.subject }}- {{ email.text }}
+                                </a>
+
+                                </li>
+                            {% endfor %}
+                        </ol>
+
+                </div>
+    <div class="result_c " style="background: white;">
+        <p class="contact_ajax_result"></p>
+        <ol class ="list_ajax_c">
+
+        </ol>
 
         <div class="btn btn-block btn-outline-info " style="margin-top: 50px">
          {% if messages %}
@@ -46,5 +63,6 @@
             {% endif %}
 
         </div>
+</div>
 
 {% endblock %}

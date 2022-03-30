@@ -102,6 +102,21 @@ class Amail(models.Model):
     is_trash = models.BooleanField(default=False)
     is_sent = models.BooleanField(default=False)
     is_read = models.BooleanField(default=False)
+    is_filter = models.BooleanField(default=False)
+    replied_email=models.ForeignKey('self',null=True,blank=True,on_delete=models.CASCADE)
+    signature_choice = [
+        ('With gratitude your friend Mahsa','With gratitude your friend Mahsa'),
+        ('Respectfully Mahsa','Respectfully Mahsa'),
+        (' Sincerely yours Mahsa',' Sincerely yours Mahsa'),
+        ('Stay safe and well','Stay safe and well'),
+
+    ]
+    signature = models.CharField(max_length=50, choices=signature_choice, null=True,blank=True)
+
+    @property
+    def file_size(self):  # give file size if it's not none
+        if self.file and hasattr(self.file,'size'):
+            return self.file.size
 
     def __str__(self):
         a = Amail.objects.get(id=self.id)
