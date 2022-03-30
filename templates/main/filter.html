@@ -1,0 +1,54 @@
+{% extends 'main/email_base.html' %}
+{% block title %} ّFilter{% endblock %}
+{% block continer %}
+     {% if messages %}
+                {% for message in messages %}
+                    <div class="alert-{{ message.tags }} rounded alert-dismissible text-center
+                     my-4 py-2" role="alert">
+
+
+                    {{message}}
+
+                    </div>
+                {% endfor %}
+            {% endif %}
+<form  class="col-md-6 mx-auto mt-5"  action="/main/filter/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+
+        <div class="btn btn-block btn-outline-info">
+
+
+
+            <p>filter word : <input type="text" name="filter_word" value=""></p>
+            <label for="lab"> Choice filter option</label>
+                  <select name="choice" id="choice">
+
+                            <option value="username" name="username">filter by username</option>
+                            <option value="subject" name="subject">filter by subject or text</option>
+
+
+                  </select>
+
+
+                  <label for="lab">  Label</label>
+                  <select name="label" id="lab">
+                      {% for label in user_labels %}
+                            <option value="{{ label }}" name="label">{{ label }}</option>
+                      {% endfor %}
+
+                  </select>
+
+
+
+
+
+            <button type="submit"  name="submit" class="btn btn-block btn-outline-info" style="background: lightgreen">Filter</button>
+{#            <button type="submit" name="draft" class="btn btn-block btn-outline-info" style="background: lightcoral">Draft</button>#}
+
+
+        </div>
+
+
+ </form>
+{% endblock %}
