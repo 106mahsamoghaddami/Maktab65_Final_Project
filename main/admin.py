@@ -1,11 +1,13 @@
 from django.contrib import admin
 from .models import User, Amail, Contacts, Category
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Count
-from django.db.models.functions import TruncDay,TruncMonth
+from django.db.models import Count, Q
+from django.db.models.functions import TruncDay, TruncMonth
 from django.http import JsonResponse
 from django.urls import path
 import json
+from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib import messages
 
 
 def sizify(value):
@@ -27,7 +29,7 @@ def sizify(value):
 
 # @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'username', 'sent_emails', 'received_emails','strange_used')
+    list_display = ('first_name', 'last_name', 'username', 'sent_emails', 'received_emails', 'strange_used')
 
     ordering = ('-date_joined',)
 
@@ -44,16 +46,33 @@ class UserAdmin(admin.ModelAdmin):
 
     @staticmethod
     def strange_used(obj):
-        emails_file=Amail.objects.filter(sender_email=obj).exclude(file=None,file__isnull=False)
+        emails_file = Amail.objects.filter(Q(sender_email=obj) | Q(receiver_email=obj)).exclude(file=None,
+                                                                                                file__isnull=False)
         total = sum(int(objects.file_size) for objects in emails_file if objects.file_size)
         total = sizify(total)
         return total
 
     # Inject chart data on page load in the ChangeList view
     def changelist_view(self, request, extra_context=None):
+        email_file = Amail.objects.filter(file__isnull=False).exclude(file='')
+        usernames = []
+        file_data = []
+        for email in email_file:
+            usernames.append(User.objects.get(pk=email.sender_email.id))
+            usernames = set(usernames)
+            usernames = list(usernames)
+        for user in set(usernames):
+            files_user = email_file.filter(sender_email=user)
+            total = sum(int(objects.file_size) for objects in files_user if objects.file_size)
+            # total = sizify(total)
+            file_data.append({"user": user.username, "user_size": total})
+            print(file_data)
+            print("*" * 40)
+
+
         chart_data = self.chart_data()
         as_json = json.dumps(list(chart_data), cls=DjangoJSONEncoder)
-        extra_context = extra_context or {"chart_data": as_json}
+        extra_context = extra_context or {"chart_data": as_json,"file_data": file_data}
         return super().changelist_view(request, extra_context=extra_context)
 
     def get_urls(self):
@@ -89,7 +108,6 @@ class AmailAdmin(admin.ModelAdmin):
 
     @staticmethod
     def receiver_email(obj):
-
         receiver = Amail.objects.filter(receiver_email__username=obj)
 
         return receiver
@@ -118,14 +136,32 @@ class AmailAdmin(admin.ModelAdmin):
 
     def chart_data(self):
         return (
-            Amail.objects.annotate(date=TruncDay("date_time")) # after check change it to TruncMonth
-            .values("date")
-            .annotate(y=Count("id"))
-            .order_by("-date")
+            Amail.objects.annotate(date=TruncDay("date_time"))  # after check change it to TruncMonth
+                .values("date")
+                .annotate(y=Count("id"))
+                .order_by("-date")
         )
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    fields = ('name',)
+    list_display = ['owner','name']
+
+    def add_view(self, request ):
+        if request.method == 'POST':
+            try:
+                users = User.objects.all()
+                for user in users:
+                    Category.objects.create(owner_id=user.pk, name=request.POST.get('name'))
+
+                return HttpResponseRedirect("/admin/main/category/")
+            except Exception as e:
+                messages.error(request, 'this label exist', extra_tags='error')
+                return HttpResponseRedirect("/admin/main/category/add/")
+        return super(CategoryAdmin, self).add_view(request)
 
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Amail, AmailAdmin)
 admin.site.register(Contacts)
-admin.site.register(Category)
+admin.site.register(Category,CategoryAdmin)

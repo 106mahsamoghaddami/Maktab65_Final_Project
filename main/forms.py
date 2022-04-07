@@ -55,12 +55,12 @@ class SendNewEmailForm(forms.ModelForm):
     class Meta:
         model = Amail
         fields = ['receiver_email', 'cc', 'bcc', 'subject', 'text', 'file','signature']
-        # widgets = {
-        #     'text': forms.Textarea(attrs={'cols': 40, 'rows': 10}),
-        #     'receiver_email': forms.EmailInput(),
-        #     'cc': forms.EmailInput(),
-        #     'bcc': forms.EmailInput(),
-        # }
+        widgets = {
+            'text': forms.Textarea(attrs={'cols': 40, 'rows': 10}),
+            # 'receiver_email': forms.EmailInput(),
+            # 'cc': forms.EmailInput(),
+            # 'bcc': forms.EmailInput(),
+        }
 
 
 class NewContactForm(forms.ModelForm):

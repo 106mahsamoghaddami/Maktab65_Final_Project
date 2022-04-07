@@ -1,4 +1,5 @@
 from . import views
+from . import api
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
@@ -38,6 +39,9 @@ urlpatterns = [
     path('search_email/', csrf_exempt(views.search), name='search'),
     path('search_contact/', csrf_exempt(views.search_contact), name='search_contact'),
     path('filter/', views.Filter.as_view(), name='search_contact'),
+    path('api_contacts/',api.detail_contact,name='detail_contact'),
+    path('api_email/',api.detail_email,name='detail_email'),
+
 
 
 

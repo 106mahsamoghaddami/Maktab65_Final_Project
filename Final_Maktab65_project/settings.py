@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+     'rest_framework',
+     'rest_framework.authtoken',
     'main.apps.MainConfig',
+    'ckeditor',
+
 ]
 
 MIDDLEWARE = [
@@ -134,6 +138,7 @@ MEDIA_ROOT =os.path.join(BASE_DIR,'media/')
 
 
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
    BASE_DIR / "static" ,
 ]
@@ -154,3 +159,39 @@ EMAIL_HOST_USER = "m.moghaddami106@gmail.com"
 EMAIL_HOST_PASSWORD = "tulrlrwlqjvqutkt"  # this is app password i take it from gmail
 EMAIL_PORT = 587
 
+REST_FRAMEWORK = {
+'DEFAULT_AUTHENTICATION_CLASSES': (
+'rest_framework.authentication.TokenAuthentication',
+),
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module}   {message}',
+            'style': '{',
+        },
+
+    },
+
+
+
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'logger.log',
+            'formatter':'verbose',
+        },
+    },
+
+    'loggers': {
+        'main_log': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

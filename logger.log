@@ -1,0 +1,46 @@
+user enter password wrong
+moghaddami@mahsa.com sign in to personal page !!
+user None enter password wrong
+user moghaddami@mahsa.com enter password wrong
+moghaddami@mahsa.com sign in to personal page !!
+AnonymousUser logout from system !!
+user moghaddami@mahsa.com enter password wrong
+moghaddami@mahsa.com sign in to personal page !!
+ logout from system !!
+user moghaddami@mahsa.com enter password wrong
+user moghaddami@mahsa.com enter password wrong
+moghaddami@mahsa.com sign in to personal page !!
+ logout from system !!
+user moghaddami@mahsa.com enter password wrong
+user karami@mahsa.com enter password wrong
+INFO 2022-04-06 02:50:31,845 views 4272 18980 moghaddami@mahsa.com sign in to personal page !!
+INFO 2022-04-06 02:51:40,011 views 4272 18980  logout from system !!
+INFO 2022-04-06 02:52:27,381 views   maleki@mahsa.com sign in to personal page !!
+INFO 2022-04-06 02:54:38,134 views   maleki@mahsa.com sent email to <QuerySet [<User: moghaddami@mahsa.com>]>
+INFO 2022-04-06 02:55:03,659 views    logout from system !!
+INFO 2022-04-06 02:55:17,701 views   moghaddami@mahsa.com sign in to personal page !!
+INFO 2022-04-06 02:55:29,357 views    moghaddami@mahsa.com assigned  personal  label for your maleki@mahsa.com send email to <QuerySet [<User: moghaddami@mahsa.com>]> by test log subject email 
+INFO 2022-04-06 02:55:55,745 views    logout from system !!
+WARNING 2022-04-07 03:01:17,816 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:02:16,023 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:08:51,459 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:12:01,305 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:14:26,902 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:14:37,322 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:14:47,445 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:17:04,469 views   user benjamin@mahsa.com enter password wrong
+WARNING 2022-04-07 03:17:14,528 views   user benjamin@mahsa.com enter password wrong
+WARNING 2022-04-07 03:17:25,303 views   user benjamin@mahsa.com enter password wrong
+WARNING 2022-04-07 03:17:36,307 views   user benjamin@mahsa.com enter password wrong
+WARNING 2022-04-07 03:19:27,309 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:38:11,012 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:39:35,566 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:42:30,155 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:51:17,510 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:51:42,313 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 03:54:56,252 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 04:11:09,508 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 04:13:06,313 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 04:23:32,866 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 04:24:47,058 views   user jani@mahsa.com enter password wrong
+WARNING 2022-04-07 04:37:18,597 views   user jani@mahsa.com enter password wrong

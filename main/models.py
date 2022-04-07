@@ -9,7 +9,7 @@ from django.core.mail import BadHeaderError, send_mail
 from django.template.loader import render_to_string
 from django.utils import timezone
 from .validators import *
-
+from ckeditor.fields import RichTextField
 
 class User(AbstractUser):
     first_name = models.CharField(max_length=50, null=True)
@@ -94,7 +94,7 @@ class Amail(models.Model):
     cc = models.ManyToManyField(User, related_name="receive1_emails",blank=True)
     bcc = models.ManyToManyField(User,  related_name="receive2_emails",blank=True)
     subject = models.CharField(max_length=200, null=True, blank=True)
-    text = models.TextField(max_length=200, null=True, blank=True)
+    text =RichTextField(null=True, blank=True)
     file = models.FileField(null=True, blank=True,upload_to="media/",validators=[validate_file_size])
     label= models.ForeignKey( Category,on_delete=models.CASCADE,blank=True, null=True)
     date_time = models.DateTimeField(default=timezone.now)
@@ -108,7 +108,8 @@ class Amail(models.Model):
         ('With gratitude your friend Mahsa','With gratitude your friend Mahsa'),
         ('Respectfully Mahsa','Respectfully Mahsa'),
         (' Sincerely yours Mahsa',' Sincerely yours Mahsa'),
-        ('Stay safe and well','Stay safe and well'),
+        ( "Stay safe and well","Stay safe and well"),
+
 
     ]
     signature = models.CharField(max_length=50, choices=signature_choice, null=True,blank=True)

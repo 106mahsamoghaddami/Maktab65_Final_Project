@@ -17,7 +17,7 @@
             <h4> From : {{ email.sender_email }} </h4>
             <h4> To : {{ email.receiver_email.get }}</h4>
             <p> Subject : {{ email.subject }}</p>
-            <p> Email Text : {{ email.text }}</p>
+            <p> Email Text : {{ email.text|safe}}</p>
             <p> Signature : {{ email.signature }}</p>
 
             <p> Email Date and Time :{{ email.date_time }}</p>

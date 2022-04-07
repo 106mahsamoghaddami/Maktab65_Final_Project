@@ -1,5 +1,5 @@
 import csv
-
+import logging
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -16,6 +16,10 @@ from django.contrib.auth.decorators import login_required
 from Final_Maktab65_project import settings
 import json
 from django.http import JsonResponse
+from rest_framework.generics import ListAPIView
+from .serializers import ContactUserSerializer
+
+logger = logging.getLogger('main_log')
 
 
 def home(request):
@@ -33,9 +37,10 @@ def signup(request):
             messages.warning(request,
                              ' WARNING : Your registration will not be finalized without confirmation email so '
                              'you will not be able to log in')
+            logger.info("New user's information has been successfully registered")
             return HttpResponseRedirect('/main/register')
         else:
-
+            logger.warning("New user registration failed ")
             return render(request, 'main/signup.html', {'form': form})
     elif request.method == 'GET':
         form = SignUpForm()
@@ -66,9 +71,11 @@ def Login(request):
             user = authenticate(username=username, password=password)
             if user and user.is_verified == True:
                 login(request, user)
-                # messages.success(request, f' welcome {user.username} !!')
+                messages.success(request, f' welcome {user.first_name} !!')
+                logger.info(f"{username} sign in to personal page !!")
                 return HttpResponseRedirect("/main/personal_page")
             else:
+                logger.warning(f"user {username} enter password wrong")
                 messages.error(request, 'Incorrect credential')
                 return render(request, "main/login.html")
 
@@ -78,6 +85,7 @@ def logout_view(request):
         return render(request, "main/logout.html")
     elif request.method == 'POST':
         logout(request)
+        logger.info(f"{request.user.username} logout from system !!")
         return HttpResponseRedirect("/main/")
 
 
@@ -122,6 +130,7 @@ class SendNewEmail(LoginRequiredMixin, View):
                 new_email.save()
 
                 messages.success(request, f"email send successfully to {receiver} and others")
+                logger.info(f"{sender} sent email to {receiver}")
 
                 return HttpResponseRedirect("/main/personal_page")
         elif "draft" in request.POST:
@@ -153,6 +162,7 @@ class SendNewEmail(LoginRequiredMixin, View):
                 new_email.save()
 
                 messages.success(request, f"email saved successfully in draft box")
+                logger.info(f"{sender} draft a new email !!")
 
                 return HttpResponseRedirect("/main/personal_page")
 
@@ -222,6 +232,7 @@ class AmailDetail(LoginRequiredMixin, View):
                 email.save(force_update=True)
 
         messages.success(request, f"assigned {choice_label} label for your {email} email ")
+        logger.info( f" {user} assigned {choice_label} label for your {email} email ")
         return HttpResponseRedirect("/main/category_list/")
 
 
@@ -257,6 +268,7 @@ class ReplyEmail(LoginRequiredMixin, View):
             new_mail.receiver_email.add(receiver_id)
             new_mail.save()
             messages.success(request, f"email send successfully ")
+            logger.info( f"{sender} replied email  successfully ")
             return HttpResponseRedirect("/main/sent/")
 
     def get(self, request, id):
@@ -304,6 +316,7 @@ class ForwardEmail(LoginRequiredMixin, View):
             email.bcc.add(bcc_id)
             email.save()
         messages.success(request, f"email send successfully ")
+        logger.info( f"{sender} forward email successfully ")
         return HttpResponseRedirect("/main/sent/")
 
 
@@ -312,6 +325,8 @@ def trash(request, email_id):
     email.is_trash = True
     email.save(force_update=True)  # for update object with new value
     messages.success(request, f"email trashed successfully ")
+    logger.info( f"email :{email}  trashed successfully ")
+
     return HttpResponseRedirect("/main/personal_page/")
 
 
@@ -373,6 +388,7 @@ class NewContact(LoginRequiredMixin, View):
                                    birth_date=form.cleaned_data['birth_date'])
             new_contact.save()
             messages.success(request, f"new contact added   successfully ")
+            logger.info( f"{new_contact} added as a new contact  successfully ")
             return HttpResponseRedirect("/main/contact_list/")
         else:
             HttpResponse(f"faild {form.errors}")
@@ -416,7 +432,7 @@ def search(request):
                                       Q(cc__username__istartswith=search_str, sender_email=request.user) |
                                       Q(bcc__username__istartswith=search_str, sender_email=request.user) |
                                       Q(subject__icontains=search_str) | Q(text__icontains=search_str) |
-                                      Q(label__amail__text__icontains=search_str))
+                                      Q(label__amail__text__icontains=search_str)).distinct()
 
         data = emails.values()
 
@@ -473,7 +489,8 @@ class UpdateContacts(LoginRequiredMixin, View):
             owner = request.user
             new_contact.user = owner
             new_contact.save(force_update=True)
-            messages.success(request, 'you updated this post', 'success')
+            messages.success(request, 'you updated this contact', 'success')
+            logger.info( f'{owner} updated {new_contact} successfully')
 
             return HttpResponseRedirect("/main/contact_list/")
 
@@ -487,6 +504,7 @@ class DeleteContact(LoginRequiredMixin, View):
         if selected_contact.user == user:
             selected_contact.delete()
             messages.success(request, "contact delete successfully")
+            logger.info( f"contact({selected_contact}) delete successfully")
             return HttpResponseRedirect("/main/contact_list/")
 
 
@@ -549,6 +567,7 @@ class ManageDrafts(LoginRequiredMixin, View):
             email.is_sent = True
             email.save(force_update=True)
             messages.success(request, f"email send successfully ")
+            logger.info( f" {user} send a draft email successfully  ")
             return HttpResponseRedirect("/main/personal_page/")
 
         elif "draft" in request.POST:
@@ -634,6 +653,7 @@ class NewCategory(LoginRequiredMixin, View):
                                     name=form.cleaned_data['name'])
             new_category.save()
             messages.success(request, f"new label created successfully ")
+            logger.info( f"{user} define new label  successfully ")
 
             return HttpResponseRedirect("/main/category_list/")
 
@@ -698,6 +718,7 @@ class DeleteLabel(LoginRequiredMixin, View):
         if selected_label.owner == user:
             selected_label.delete()
             messages.success(request, f"label delete  successfully ")
+            logger.info( f"label : {selected_label} delete  successfully ")
 
             return HttpResponseRedirect("/main/category_list/")
 
@@ -721,6 +742,8 @@ class Filter(LoginRequiredMixin, View):
 
     def post(self, request):
 
+
+
         if request.POST['choice'] == 'subject':  # filter by subject and text
             try:
 
@@ -730,6 +753,7 @@ class Filter(LoginRequiredMixin, View):
                 all_emails = Amail.objects.filter(Q(receiver_email__id=user_id) | Q(sender_email=request.user.id))
                 for email in all_emails:
                     if request.POST['filter_word'] in email.subject or request.POST['filter_word'] in email.text:
+
                         choice_label = request.POST['label']
 
                         for cat in Category.objects.all():
@@ -744,7 +768,7 @@ class Filter(LoginRequiredMixin, View):
                 return HttpResponseRedirect("/main/category_list/")
 
 
-            except:
+            except Exception :
                 messages.warning(request, f" some thing is wrong try again  !!")
                 return HttpResponseRedirect("/main/filter/")
 
@@ -777,3 +801,5 @@ class Filter(LoginRequiredMixin, View):
             except:
                 messages.warning(request, f" some thing is wrong try again  !!")
                 return HttpResponseRedirect("/main/filter/")
+
+
